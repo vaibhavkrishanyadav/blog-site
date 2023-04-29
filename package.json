@@ -1,0 +1,16 @@
+{
+  "name": "blog-site",
+  "version": "1.0.0",
+  "description": "a blogging site",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Vaibhav Krishan Yadav",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "nodemon": "^2.0.22"
+  }
+}
