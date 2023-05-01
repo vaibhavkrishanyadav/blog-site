@@ -18,21 +18,10 @@ app.set('view engine', 'ejs');
 
 // middleware and static files
 app.use(express.static('public'));
+// used to transfer form data to req body
+app.use(express.urlencoded());
 app.use(morgan('dev'));
 
-// app.get('/add-blog', (req, res) => {
-//   const blog = Blog({
-//     title: 'my blog 2',
-//     snippet: 'Lorem ipsum dolor sit amet consectetur',
-//     body: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quia quibusdam quaerat illo a modi tenetur ut blanditiis, illum quo consectetur recusandae excepturi natus impedit rem, tempora cum fuga quae in.',
-//   });
-
-//   blog.save()
-//     .then((result) => {
-//       res.send(result);
-//     })
-//     .catch((err) => console.log(err))
-// })
 
 app.get('/', (req, res) => {
   res.redirect('/blogs');
@@ -43,6 +32,11 @@ app.get('/about', (req, res) => {
   res.render('about', { title: 'About' });
 });
 
+app.get('/blogs/create', (req, res) => {
+  console.log('blog');
+  res.render('create', { title: 'Create a new blog' });
+});
+
 app.get('/blogs', (req, res) => {
   Blog.find().sort({ createdAt: -1})
     .then((result) => {
@@ -51,10 +45,41 @@ app.get('/blogs', (req, res) => {
     .catch((err) => console.log(err))
 })
 
-app.get('/blogs/create', (req, res) => {
-  console.log('blog');
-  res.render('create', { title: 'Create a new blog' });
+app.post('/blogs', (req, res) => {
+  const blog = new Blog(req.body);
+
+  blog.save()
+    .then((result) => {
+      res.redirect('/blogs');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
+
+app.get('/blogs/:id', (req, res) => {
+  const id = req.params.id;
+
+  Blog.findById(id)
+    .then(result => {
+      res.render('details', { blog: result, title: 'Blog Details'});
+    })
+    .catch(err => {
+      console.log(err);
+    })
+})
+
+app.delete('/blogs/:id', (req, res) => {
+  const id = req.params.id;
+
+  Blog.findByIdAndDelete(id)
+    .then(result => {
+      res.json({ redirect: '/blogs' });
+    })
+    .catch(err => {
+      console.log(err);
+    })
+})
 
 // 404 page
 app.use((req, res) => {
